@@ -17,4 +17,5 @@ Demo toy cho mô hình HGP từ bài báo "Tripartite Heterogeneous Graph Propag
 - Để scale lớn: Thêm sampling (sec. 4.2).
 
 Liên hệ: Nếu cần mở rộng với dữ liệu thực (BERT/VGG như sec. 5.1).
+
 link thực hành: https://docs.google.com/document/d/1dlOBK-VgrVF06Oubd0TK7EhYW0TnPGF5t_H0_bGxK9s/edit?usp=sharing
