@@ -92,7 +92,7 @@ def test_recall_ndcg(topk=20):
     ndcg_val = ndcg / total_pos if total_pos > 0 else 0
     return recall, ndcg_val
 
-# ================== TRAINING + SAVE BEST MODEL ==================
+# ================== TRAINING + SAVE MODEL ==================
 best_recall = 0.0
 print("Start training HGP (exact paper implementation)...")
 

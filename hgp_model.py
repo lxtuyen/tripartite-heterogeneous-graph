@@ -24,15 +24,15 @@ class HGP_Exact(nn.Module):
         self.f_item  = nn.Linear(feat_dim, hidden_dim)
         self.f_group = nn.Linear(feat_dim, hidden_dim)
 
-        # === Propagation weight W_H^(k) - trong paper dùng chung cho mọi layer ===
+        # === Propagation weight W_H^(k) ===
         self.W_h = nn.Parameter(torch.Tensor(hidden_dim, hidden_dim))
         nn.init.xavier_uniform_(self.W_h)
 
-        # === Attention như Transformer (Eq. 3-4) ===
+        # === Attention ===
         self.W_q = nn.Linear(hidden_dim, hidden_dim)
         self.W_k = nn.Linear(hidden_dim, hidden_dim)
-        self.W_v = nn.Linear(hidden_dim, hidden_dim // 2)   # paper: dim WV = (m,8)
-        self.final_merge = nn.Linear(hidden_dim, hidden_dim)  # concat 2 × (m//2) → m
+        self.W_v = nn.Linear(hidden_dim, hidden_dim // 2)
+        self.final_merge = nn.Linear(hidden_dim, hidden_dim)
 
         self.dropout = nn.Dropout(dropout)
         self.reset_parameters()
@@ -64,7 +64,7 @@ class HGP_Exact(nn.Module):
         H[self.num_users:self.num_users + self.num_items] = xi
         H[-self.num_groups:] = xg
 
-        # === Step 2: 2 propagation riêng biệt (Eq.2) ===
+        # === Step 2: 2 propagation riêng biệt ===
         def propagate(adj, Z_init):
             Z = Z_init
             for k in range(self.K):
@@ -75,7 +75,7 @@ class HGP_Exact(nn.Module):
         Z_gu = propagate(adj_gu, H)   # từ Group-User graph
         Z_ui = propagate(adj_ui, H)   # từ User-Item graph
 
-        # === Step 3: Attention kết hợp 2 embeddings (Eq.3-4) ===
+        # === Step 3: Attention kết hợp 2 embeddings ===
         # Stack 2 embeddings: [N, 2, hidden_dim]
         Y = torch.stack([Z_gu, Z_ui], dim=1)          # shape (N, 2, m)
 
@@ -88,7 +88,7 @@ class HGP_Exact(nn.Module):
         Y_att = Y_att.reshape(N, -1)                  # (N, m)
         Z_final = self.final_merge(Y_att)             # (N, m)
 
-        return Z_final, H  # Z_final: final embedding, H: raw feature projection (dùng cho Eq.5)
+        return Z_final, H  # Z_final: final embedding, H: raw feature projection
 
     def predict_ctr(self, Z, X_raw, user_idx, item_idx):
         """
